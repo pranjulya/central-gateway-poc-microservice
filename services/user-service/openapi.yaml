@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: User Service POC
+  version: 0.1.0
+servers:
+  - url: http://localhost:4001
+paths:
+  /healthz:
+    get:
+      summary: User service health check
+      responses:
+        '200':
+          description: Service is healthy
+  /users:
+    get:
+      summary: List all users
+      responses:
+        '200':
+          description: Collection of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  requestId:
+                    type: string
+    post:
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+                  requestId:
+                    type: string
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Fetch a single user
+      responses:
+        '200':
+          description: Found user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+                  requestId:
+                    type: string
+        '404':
+          description: User not found
+    delete:
+      summary: Remove a user
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+    UserInput:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email

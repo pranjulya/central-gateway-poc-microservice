@@ -1,0 +1,19 @@
+{
+  "name": "central-gateway-poc",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "gateway",
+    "services/user-service",
+    "services/vpn-service"
+  ],
+  "scripts": {
+    "start": "concurrently \"npm --workspace gateway start\" \"npm --workspace services/user-service start\" \"npm --workspace services/vpn-service start\"",
+    "start:gateway": "npm --workspace gateway start",
+    "start:user": "npm --workspace services/user-service start",
+    "start:vpn": "npm --workspace services/vpn-service start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
