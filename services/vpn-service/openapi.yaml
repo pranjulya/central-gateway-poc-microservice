@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: VPN Service POC
+  version: 0.1.0
+servers:
+  - url: http://localhost:4002
+paths:
+  /healthz:
+    get:
+      summary: VPN service health check
+      responses:
+        '200':
+          description: Service is healthy
+  /vpn/next:
+    get:
+      summary: Retrieve the next available IP address
+      responses:
+        '200':
+          description: Next IP assignment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Assignment'
+                  requestId:
+                    type: string
+  /vpn/preview:
+    get:
+      summary: Preview the next IP without assignment
+      responses:
+        '200':
+          description: Upcoming IP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      ip:
+                        type: string
+                  requestId:
+                    type: string
+components:
+  schemas:
+    Assignment:
+      type: object
+      properties:
+        ip:
+          type: string
+        assignedAt:
+          type: string
+          format: date-time

@@ -1,0 +1,12 @@
+{
+  "name": "vpn-service",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "http-errors": "^2.0.0"
+  }
+}

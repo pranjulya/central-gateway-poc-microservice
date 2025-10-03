@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Central Gateway POC
+  version: 0.1.0
+  description: >-
+    Proof-of-concept gateway that proxies requests to the user and VPN services
+    while applying request correlation IDs and optional authentication.
+servers:
+  - url: http://localhost:3000
+paths:
+  /healthz:
+    get:
+      summary: Gateway health check
+      responses:
+        '200':
+          description: Gateway is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  uptime:
+                    type: number
+                  requestId:
+                    type: string
+  /users:
+    get:
+      summary: List users (proxied to user service)
+      responses:
+        '200':
+          description: Successful response from user service
+    post:
+      summary: Create user (proxied to user service)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../services/user-service/openapi.yaml#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created by the user service
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get user by ID (proxied)
+      responses:
+        '200':
+          description: Successful response from user service
+    delete:
+      summary: Delete user (proxied)
+      responses:
+        '204':
+          description: User removed by the user service
+  /vpn/next:
+    get:
+      summary: Fetch the next available IP (proxied to VPN service)
+      responses:
+        '200':
+          description: Next IP address assigned by VPN service
+security:
+  - BasicAuth: []
+  - BearerAuth: []
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
