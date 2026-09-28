@@ -13,7 +13,7 @@ central-gateway-poc-microservice/
 │   ├── src/middleware/     # requestId + error handling
 │   └── openapi.yaml        # gateway-facing OpenAPI stub
 ├── services/
-│   ├── user-service/       # CRUD demo service with in-memory store
+│   ├── user-service/       # list/get/create/delete demo service with in-memory store
 │   │   ├── src/app.js
 │   │   ├── src/routes.js
 │   │   ├── src/store.js
@@ -47,7 +47,7 @@ central-gateway-poc-microservice/
    ```bash
    npm install
    ```
-   This pulls dependencies for the root workspace and both services.
+   This pulls dependencies for all three workspaces (gateway, user-service, vpn-service).
 
 3. **Run everything**
    ```bash
@@ -69,6 +69,21 @@ central-gateway-poc-microservice/
    ```
    All responses include a `requestId` header/body for traceability.
 
+### Gateway endpoint map
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| `GET` | `/healthz` | Gateway health |
+| `GET` | `/openapi` | Serves `gateway/openapi.yaml` |
+| `GET` | `/users` | List users (proxied) |
+| `GET` | `/users/:id` | Get one user (proxied) |
+| `POST` | `/users` | Create user (proxied) |
+| `DELETE` | `/users/:id` | Delete user (proxied); there is no update/PUT route |
+| `GET` | `/vpn/next` | Assign and return the next IP (proxied) |
+| `GET` | `/vpn/preview` | Peek at the next IP without assigning it (proxied) |
+
+The gateway OpenAPI stub documents these paths (including `/vpn/preview` and `/openapi`). The user service is list/get/create/delete, not full CRUD.
+
 5. **Stop the stack**
    Press `Ctrl+C` once to terminate all three processes. Because storage is in-memory, any created users disappear when the processes stop.
 
@@ -76,7 +91,7 @@ central-gateway-poc-microservice/
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `PORT` | `3000` (gateway), `4001`, `4002` | Override listening ports. |
+| `PORT` | `3000` (gateway), `4001` (user), `4002` (VPN) | Per-process listen port. Each service reads its own `PORT`; do **not** export a single `PORT` before `npm start` or all three will collide. Override per script, e.g. `PORT=5001 npm run start:user`. |
 | `USER_SERVICE_URL` | `http://localhost:4001` | Gateway target for `/users`. |
 | `VPN_SERVICE_URL` | `http://localhost:4002` | Gateway target for `/vpn`. |
 | `GATEWAY_PROXY_TIMEOUT` | `10000` | Proxy timeout in ms. |
@@ -84,7 +99,7 @@ central-gateway-poc-microservice/
 | `GATEWAY_BEARER_TOKEN` or `GATEWAY_JWT_TOKEN` | unset | Enables simple Bearer token auth check. |
 | `VPN_BASE_IP` | `10.0.0.10` | Starting IP for the VPN service generator. |
 
-> Tip: Create a local `.env` file (ignored by Git) and load it with tools like `dotenv-cli` or by exporting variables before `npm start`.
+> Tip: Create a local `.env` file (listed in `.gitignore`) and load it with tools like `dotenv-cli`, or export variables for a **single** workspace script (for example `PORT=5001 npm run start:user`). Avoid a global `PORT` with `npm start`.
 
 ## Logging & Correlation IDs
 

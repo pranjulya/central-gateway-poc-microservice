@@ -65,6 +65,18 @@ paths:
       responses:
         '200':
           description: Next IP address assigned by VPN service
+  /vpn/preview:
+    get:
+      summary: Peek at the next IP without assigning it (proxied to VPN service)
+      responses:
+        '200':
+          description: Preview of the next IP from VPN service
+  /openapi:
+    get:
+      summary: Gateway OpenAPI document
+      responses:
+        '200':
+          description: OpenAPI YAML for the gateway surface
 security:
   - BasicAuth: []
   - BearerAuth: []
