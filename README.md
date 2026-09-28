@@ -6,7 +6,6 @@ Proof-of-concept for a mini service mesh composed of a single Express gateway pr
 
 ```
 central-gateway-poc-microservice/
-├── .nvmrc                  # pins Node 22.x
 ├── package.json            # npm workspace + root scripts
 ├── gateway/                # API gateway (Express + http-proxy-middleware)
 │   ├── src/index.js        # main entrypoint + middleware wiring
@@ -42,7 +41,7 @@ central-gateway-poc-microservice/
    ```bash
    nvm use 22  # if you have NVM installed
    ```
-   The repo includes `.nvmrc` for convenience. Any Node 22.x runtime works.
+   Any Node 22.x runtime works.
 
 2. **Install dependencies**
    ```bash
