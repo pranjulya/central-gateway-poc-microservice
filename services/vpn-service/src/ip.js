@@ -19,7 +19,10 @@ export function reset(startFrom = DEFAULT_BASE_IP) {
 }
 
 function ipToNumber(ipAddress) {
-  const parts = ipAddress.split('.').map((segment) => Number.parseInt(segment, 10));
+  if (typeof ipAddress !== 'string' || !/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ipAddress)) {
+    throw new Error(`Invalid IP address: ${ipAddress}`);
+  }
+  const parts = ipAddress.split('.').map(Number);
   if (parts.length !== 4 || parts.some((segment) => Number.isNaN(segment) || segment < 0 || segment > 255)) {
     throw new Error(`Invalid IP address: ${ipAddress}`);
   }
